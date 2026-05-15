@@ -9,38 +9,285 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppStudyPlanRouteImport } from './routes/_app/study-plan'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppProgressRouteImport } from './routes/_app/progress'
+import { Route as AppPracticeRouteImport } from './routes/_app/practice'
+import { Route as AppMockRouteImport } from './routes/_app/mock'
+import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppPracticeWrongRouteImport } from './routes/_app/practice.wrong'
+import { Route as AppPracticeWritingTask2RouteImport } from './routes/_app/practice.writing-task2'
+import { Route as AppPracticeWritingTask1RouteImport } from './routes/_app/practice.writing-task1'
+import { Route as AppPracticeVocabularyRouteImport } from './routes/_app/practice.vocabulary'
+import { Route as AppPracticeSpeakingRouteImport } from './routes/_app/practice.speaking'
+import { Route as AppPracticeReadingRouteImport } from './routes/_app/practice.reading'
+import { Route as AppPracticeListeningRouteImport } from './routes/_app/practice.listening'
+import { Route as AppPracticeGrammarRouteImport } from './routes/_app/practice.grammar'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppStudyPlanRoute = AppStudyPlanRouteImport.update({
+  id: '/study-plan',
+  path: '/study-plan',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProgressRoute = AppProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPracticeRoute = AppPracticeRouteImport.update({
+  id: '/practice',
+  path: '/practice',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMockRoute = AppMockRouteImport.update({
+  id: '/mock',
+  path: '/mock',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPracticeWrongRoute = AppPracticeWrongRouteImport.update({
+  id: '/wrong',
+  path: '/wrong',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeWritingTask2Route = AppPracticeWritingTask2RouteImport.update({
+  id: '/writing-task2',
+  path: '/writing-task2',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeWritingTask1Route = AppPracticeWritingTask1RouteImport.update({
+  id: '/writing-task1',
+  path: '/writing-task1',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeVocabularyRoute = AppPracticeVocabularyRouteImport.update({
+  id: '/vocabulary',
+  path: '/vocabulary',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeSpeakingRoute = AppPracticeSpeakingRouteImport.update({
+  id: '/speaking',
+  path: '/speaking',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeReadingRoute = AppPracticeReadingRouteImport.update({
+  id: '/reading',
+  path: '/reading',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeListeningRoute = AppPracticeListeningRouteImport.update({
+  id: '/listening',
+  path: '/listening',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeGrammarRoute = AppPracticeGrammarRouteImport.update({
+  id: '/grammar',
+  path: '/grammar',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/mock': typeof AppMockRoute
+  '/practice': typeof AppPracticeRouteWithChildren
+  '/progress': typeof AppProgressRoute
+  '/settings': typeof AppSettingsRoute
+  '/study-plan': typeof AppStudyPlanRoute
+  '/practice/grammar': typeof AppPracticeGrammarRoute
+  '/practice/listening': typeof AppPracticeListeningRoute
+  '/practice/reading': typeof AppPracticeReadingRoute
+  '/practice/speaking': typeof AppPracticeSpeakingRoute
+  '/practice/vocabulary': typeof AppPracticeVocabularyRoute
+  '/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/practice/writing-task2': typeof AppPracticeWritingTask2Route
+  '/practice/wrong': typeof AppPracticeWrongRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AppDashboardRoute
+  '/mock': typeof AppMockRoute
+  '/practice': typeof AppPracticeRouteWithChildren
+  '/progress': typeof AppProgressRoute
+  '/settings': typeof AppSettingsRoute
+  '/study-plan': typeof AppStudyPlanRoute
+  '/practice/grammar': typeof AppPracticeGrammarRoute
+  '/practice/listening': typeof AppPracticeListeningRoute
+  '/practice/reading': typeof AppPracticeReadingRoute
+  '/practice/speaking': typeof AppPracticeSpeakingRoute
+  '/practice/vocabulary': typeof AppPracticeVocabularyRoute
+  '/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/practice/writing-task2': typeof AppPracticeWritingTask2Route
+  '/practice/wrong': typeof AppPracticeWrongRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
+  '/signup': typeof SignupRoute
+  '/_app/dashboard': typeof AppDashboardRoute
+  '/_app/mock': typeof AppMockRoute
+  '/_app/practice': typeof AppPracticeRouteWithChildren
+  '/_app/progress': typeof AppProgressRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/study-plan': typeof AppStudyPlanRoute
+  '/_app/practice/grammar': typeof AppPracticeGrammarRoute
+  '/_app/practice/listening': typeof AppPracticeListeningRoute
+  '/_app/practice/reading': typeof AppPracticeReadingRoute
+  '/_app/practice/speaking': typeof AppPracticeSpeakingRoute
+  '/_app/practice/vocabulary': typeof AppPracticeVocabularyRoute
+  '/_app/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/_app/practice/writing-task2': typeof AppPracticeWritingTask2Route
+  '/_app/practice/wrong': typeof AppPracticeWrongRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/onboarding'
+    | '/signup'
+    | '/dashboard'
+    | '/mock'
+    | '/practice'
+    | '/progress'
+    | '/settings'
+    | '/study-plan'
+    | '/practice/grammar'
+    | '/practice/listening'
+    | '/practice/reading'
+    | '/practice/speaking'
+    | '/practice/vocabulary'
+    | '/practice/writing-task1'
+    | '/practice/writing-task2'
+    | '/practice/wrong'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/onboarding'
+    | '/signup'
+    | '/dashboard'
+    | '/mock'
+    | '/practice'
+    | '/progress'
+    | '/settings'
+    | '/study-plan'
+    | '/practice/grammar'
+    | '/practice/listening'
+    | '/practice/reading'
+    | '/practice/speaking'
+    | '/practice/vocabulary'
+    | '/practice/writing-task1'
+    | '/practice/writing-task2'
+    | '/practice/wrong'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/onboarding'
+    | '/signup'
+    | '/_app/dashboard'
+    | '/_app/mock'
+    | '/_app/practice'
+    | '/_app/progress'
+    | '/_app/settings'
+    | '/_app/study-plan'
+    | '/_app/practice/grammar'
+    | '/_app/practice/listening'
+    | '/_app/practice/reading'
+    | '/_app/practice/speaking'
+    | '/_app/practice/vocabulary'
+    | '/_app/practice/writing-task1'
+    | '/_app/practice/writing-task2'
+    | '/_app/practice/wrong'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +295,160 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/study-plan': {
+      id: '/_app/study-plan'
+      path: '/study-plan'
+      fullPath: '/study-plan'
+      preLoaderRoute: typeof AppStudyPlanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/progress': {
+      id: '/_app/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof AppProgressRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/practice': {
+      id: '/_app/practice'
+      path: '/practice'
+      fullPath: '/practice'
+      preLoaderRoute: typeof AppPracticeRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/mock': {
+      id: '/_app/mock'
+      path: '/mock'
+      fullPath: '/mock'
+      preLoaderRoute: typeof AppMockRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/dashboard': {
+      id: '/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/practice/wrong': {
+      id: '/_app/practice/wrong'
+      path: '/wrong'
+      fullPath: '/practice/wrong'
+      preLoaderRoute: typeof AppPracticeWrongRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/writing-task2': {
+      id: '/_app/practice/writing-task2'
+      path: '/writing-task2'
+      fullPath: '/practice/writing-task2'
+      preLoaderRoute: typeof AppPracticeWritingTask2RouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/writing-task1': {
+      id: '/_app/practice/writing-task1'
+      path: '/writing-task1'
+      fullPath: '/practice/writing-task1'
+      preLoaderRoute: typeof AppPracticeWritingTask1RouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/vocabulary': {
+      id: '/_app/practice/vocabulary'
+      path: '/vocabulary'
+      fullPath: '/practice/vocabulary'
+      preLoaderRoute: typeof AppPracticeVocabularyRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/speaking': {
+      id: '/_app/practice/speaking'
+      path: '/speaking'
+      fullPath: '/practice/speaking'
+      preLoaderRoute: typeof AppPracticeSpeakingRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/reading': {
+      id: '/_app/practice/reading'
+      path: '/reading'
+      fullPath: '/practice/reading'
+      preLoaderRoute: typeof AppPracticeReadingRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/listening': {
+      id: '/_app/practice/listening'
+      path: '/listening'
+      fullPath: '/practice/listening'
+      preLoaderRoute: typeof AppPracticeListeningRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/grammar': {
+      id: '/_app/practice/grammar'
+      path: '/grammar'
+      fullPath: '/practice/grammar'
+      preLoaderRoute: typeof AppPracticeGrammarRouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
   }
 }
 
+interface AppPracticeRouteChildren {
+  AppPracticeGrammarRoute: typeof AppPracticeGrammarRoute
+  AppPracticeListeningRoute: typeof AppPracticeListeningRoute
+  AppPracticeReadingRoute: typeof AppPracticeReadingRoute
+  AppPracticeSpeakingRoute: typeof AppPracticeSpeakingRoute
+  AppPracticeVocabularyRoute: typeof AppPracticeVocabularyRoute
+  AppPracticeWritingTask1Route: typeof AppPracticeWritingTask1Route
+  AppPracticeWritingTask2Route: typeof AppPracticeWritingTask2Route
+  AppPracticeWrongRoute: typeof AppPracticeWrongRoute
+}
+
+const AppPracticeRouteChildren: AppPracticeRouteChildren = {
+  AppPracticeGrammarRoute: AppPracticeGrammarRoute,
+  AppPracticeListeningRoute: AppPracticeListeningRoute,
+  AppPracticeReadingRoute: AppPracticeReadingRoute,
+  AppPracticeSpeakingRoute: AppPracticeSpeakingRoute,
+  AppPracticeVocabularyRoute: AppPracticeVocabularyRoute,
+  AppPracticeWritingTask1Route: AppPracticeWritingTask1Route,
+  AppPracticeWritingTask2Route: AppPracticeWritingTask2Route,
+  AppPracticeWrongRoute: AppPracticeWrongRoute,
+}
+
+const AppPracticeRouteWithChildren = AppPracticeRoute._addFileChildren(
+  AppPracticeRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppMockRoute: typeof AppMockRoute
+  AppPracticeRoute: typeof AppPracticeRouteWithChildren
+  AppProgressRoute: typeof AppProgressRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppStudyPlanRoute: typeof AppStudyPlanRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppMockRoute: AppMockRoute,
+  AppPracticeRoute: AppPracticeRouteWithChildren,
+  AppProgressRoute: AppProgressRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppStudyPlanRoute: AppStudyPlanRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
