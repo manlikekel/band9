@@ -16,6 +16,8 @@ import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppPracticeWritingTask2RouteImport } from './routes/_app/practice.writing-task2'
+import { Route as AppPracticeWritingTask1RouteImport } from './routes/_app/practice.writing-task1'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -51,6 +53,16 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPracticeWritingTask2Route = AppPracticeWritingTask2RouteImport.update({
+  id: '/writing-task2',
+  path: '/writing-task2',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
+const AppPracticeWritingTask1Route = AppPracticeWritingTask1RouteImport.update({
+  id: '/writing-task1',
+  path: '/writing-task1',
+  getParentRoute: () => AppPracticeRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -58,7 +70,9 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
-  '/practice': typeof AppPracticeRoute
+  '/practice': typeof AppPracticeRouteWithChildren
+  '/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/practice/writing-task2': typeof AppPracticeWritingTask2Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -66,7 +80,9 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
-  '/practice': typeof AppPracticeRoute
+  '/practice': typeof AppPracticeRouteWithChildren
+  '/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/practice/writing-task2': typeof AppPracticeWritingTask2Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -76,7 +92,9 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/signup': typeof SignupRoute
   '/_app/dashboard': typeof AppDashboardRoute
-  '/_app/practice': typeof AppPracticeRoute
+  '/_app/practice': typeof AppPracticeRouteWithChildren
+  '/_app/practice/writing-task1': typeof AppPracticeWritingTask1Route
+  '/_app/practice/writing-task2': typeof AppPracticeWritingTask2Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,8 +105,18 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/practice'
+    | '/practice/writing-task1'
+    | '/practice/writing-task2'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/onboarding' | '/signup' | '/dashboard' | '/practice'
+  to:
+    | '/'
+    | '/login'
+    | '/onboarding'
+    | '/signup'
+    | '/dashboard'
+    | '/practice'
+    | '/practice/writing-task1'
+    | '/practice/writing-task2'
   id:
     | '__root__'
     | '/'
@@ -98,6 +126,8 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_app/dashboard'
     | '/_app/practice'
+    | '/_app/practice/writing-task1'
+    | '/_app/practice/writing-task2'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,17 +189,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/practice/writing-task2': {
+      id: '/_app/practice/writing-task2'
+      path: '/writing-task2'
+      fullPath: '/practice/writing-task2'
+      preLoaderRoute: typeof AppPracticeWritingTask2RouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
+    '/_app/practice/writing-task1': {
+      id: '/_app/practice/writing-task1'
+      path: '/writing-task1'
+      fullPath: '/practice/writing-task1'
+      preLoaderRoute: typeof AppPracticeWritingTask1RouteImport
+      parentRoute: typeof AppPracticeRoute
+    }
   }
 }
 
+interface AppPracticeRouteChildren {
+  AppPracticeWritingTask1Route: typeof AppPracticeWritingTask1Route
+  AppPracticeWritingTask2Route: typeof AppPracticeWritingTask2Route
+}
+
+const AppPracticeRouteChildren: AppPracticeRouteChildren = {
+  AppPracticeWritingTask1Route: AppPracticeWritingTask1Route,
+  AppPracticeWritingTask2Route: AppPracticeWritingTask2Route,
+}
+
+const AppPracticeRouteWithChildren = AppPracticeRoute._addFileChildren(
+  AppPracticeRouteChildren,
+)
+
 interface AppRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
-  AppPracticeRoute: typeof AppPracticeRoute
+  AppPracticeRoute: typeof AppPracticeRouteWithChildren
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
-  AppPracticeRoute: AppPracticeRoute,
+  AppPracticeRoute: AppPracticeRouteWithChildren,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
