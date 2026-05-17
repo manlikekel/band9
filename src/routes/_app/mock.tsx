@@ -49,6 +49,7 @@ function MockExam() {
   const [mode, setMode] = useState<"strict" | "practice">("strict");
   const [data, setData] = useState<MockData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
   const [examId, setExamId] = useState<string | null>(null);
 
   // section state
@@ -86,20 +87,35 @@ function MockExam() {
     if (!user) return;
     setLoading(true);
     try {
-      const [l1, l2, l3, l4, r1, r2, r3, w1, w2, sp] = await Promise.all([
-        ai({ data: { task: "generate_questions", payload: { section: "listening", part: 1, count: 10 } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "listening", part: 2, count: 10 } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "listening", part: 3, count: 10 } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "listening", part: 4, count: 10 } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "reading", part: 1, instruction: "GT Section 1: short factual texts." } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "reading", part: 2, instruction: "GT Section 2: workplace/employment text." } } }),
-        ai({ data: { task: "generate_questions", payload: { section: "reading", part: 3, instruction: "GT Section 3: longer descriptive text." } } }),
-        ai({ data: { task: "writing_prompt", payload: { task: "task1" } } }),
-        ai({ data: { task: "writing_prompt", payload: { task: "task2" } } }),
-        ai({ data: { task: "speaking_prompt", payload: { part: "all" } } }),
-      ]);
-      const errs = [l1, l2, l3, l4, r1, r2, r3, w1, w2, sp].find((x) => x.error);
-      if (errs?.error) { toast.error(errs.error); setLoading(false); return; }
+      // Sequenced (not parallel) to avoid AI gateway rate limits.
+      const calls: { label: string; payload: any; task: any }[] = [
+        { label: "Listening Part 1", task: "generate_questions", payload: { section: "listening", part: 1, count: 10 } },
+        { label: "Listening Part 2", task: "generate_questions", payload: { section: "listening", part: 2, count: 10 } },
+        { label: "Listening Part 3", task: "generate_questions", payload: { section: "listening", part: 3, count: 10 } },
+        { label: "Listening Part 4", task: "generate_questions", payload: { section: "listening", part: 4, count: 10 } },
+        { label: "Reading Section 1", task: "generate_questions", payload: { section: "reading", part: 1, instruction: "GT Section 1: short factual texts." } },
+        { label: "Reading Section 2", task: "generate_questions", payload: { section: "reading", part: 2, instruction: "GT Section 2: workplace/employment text." } },
+        { label: "Reading Section 3", task: "generate_questions", payload: { section: "reading", part: 3, instruction: "GT Section 3: longer descriptive text." } },
+        { label: "Writing Task 1", task: "writing_prompt", payload: { task: "task1" } },
+        { label: "Writing Task 2", task: "writing_prompt", payload: { task: "task2" } },
+        { label: "Speaking prompts", task: "speaking_prompt", payload: { part: "all" } },
+      ];
+
+      const results: any[] = [];
+      for (let i = 0; i < calls.length; i++) {
+        setLoadingMsg(`Building ${calls[i].label} (${i + 1}/${calls.length})…`);
+        const r = await ai({ data: { task: calls[i].task, payload: calls[i].payload } });
+        if (r.error) {
+          toast.error(`${calls[i].label}: ${r.error}`);
+          setLoading(false);
+          setLoadingMsg("");
+          return;
+        }
+        results.push(r);
+        // gentle spacing to keep under per-minute quotas
+        if (i < calls.length - 1) await new Promise((res) => setTimeout(res, 350));
+      }
+      const [l1, l2, l3, l4, r1, r2, r3, w1, w2, sp] = results;
 
       const speak = sp.result as any;
       const speaking: SpeakingPrompts = {
@@ -123,6 +139,7 @@ function MockExam() {
       setSeconds(TIMES.listening);
     } finally {
       setLoading(false);
+      setLoadingMsg("");
     }
   }
 
@@ -249,7 +266,7 @@ function MockExam() {
           onClick={start}
           className="mt-5 h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Building exam…</> : "Begin mock exam"}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {loadingMsg || "Building exam…"}</> : "Begin mock exam"}
         </button>
         <AiDisclaimer className="mt-5" />
       </div>
