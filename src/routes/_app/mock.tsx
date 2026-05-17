@@ -266,7 +266,7 @@ function MockExam() {
           onClick={start}
           className="mt-5 h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Building exam…</> : "Begin mock exam"}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {loadingMsg || "Building exam…"}</> : "Begin mock exam"}
         </button>
         <AiDisclaimer className="mt-5" />
       </div>
