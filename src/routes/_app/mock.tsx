@@ -532,6 +532,22 @@ function MockReport({ report, bands }: { report: Report; bands: { listening?: nu
         </section>
       )}
 
+      {report.next_practice?.length > 0 && (
+        <section className="mt-4 rounded-2xl border border-border bg-card p-4">
+          <p className="text-sm font-semibold mb-2">Recommended next practice</p>
+          <ul className="list-disc pl-5 text-sm space-y-1 text-muted-foreground">
+            {report.next_practice.map((m, i) => <li key={i}>{m}</li>)}
+          </ul>
+        </section>
+      )}
+
+      <button
+        onClick={() => window.location.reload()}
+        className="mt-5 h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium"
+      >
+        Start a new mock exam
+      </button>
+
       <AiDisclaimer className="mt-5" />
     </div>
   );
