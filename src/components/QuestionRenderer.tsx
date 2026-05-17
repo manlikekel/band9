@@ -114,9 +114,14 @@ export function gradeAnswers(qs: IELTSQuestion[], a: Record<string, string>) {
   qs.forEach((q, i) => {
     const id = String(q.id ?? i + 1);
     const user = (a[id] ?? "").trim();
+    const alts = Array.isArray(q.alternatives)
+      ? q.alternatives
+      : q.alternatives
+        ? [q.alternatives as unknown as string]
+        : [];
     const accept = [
       ...(Array.isArray(q.correct_answer) ? q.correct_answer : [q.correct_answer]),
-      ...(q.alternatives ?? []),
+      ...alts,
     ]
       .filter(Boolean)
       .map((s) => String(s).trim().toLowerCase());
