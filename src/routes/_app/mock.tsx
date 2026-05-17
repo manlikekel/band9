@@ -49,6 +49,7 @@ function MockExam() {
   const [mode, setMode] = useState<"strict" | "practice">("strict");
   const [data, setData] = useState<MockData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMsg, setLoadingMsg] = useState("");
   const [examId, setExamId] = useState<string | null>(null);
 
   // section state
