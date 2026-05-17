@@ -84,24 +84,35 @@ export const aiMark = createServerFn({ method: "POST" })
     const system = PROMPTS[data.task];
     const userMsg = JSON.stringify(data.payload);
 
-    const res = await fetch(GATEWAY, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: data.model ?? "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: system + "\nReturn ONLY valid JSON, no prose, no markdown fences." },
-          { role: "user", content: userMsg },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
-
-    if (!res.ok) {
-      if (res.status === 429) return { error: "Rate limited. Please retry shortly.", result: null };
+    // Retry with exponential backoff on 429/5xx.
+    let res: Response | null = null;
+    let lastErr = "";
+    for (let attempt = 0; attempt < 5; attempt++) {
+      res = await fetch(GATEWAY, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: data.model ?? "google/gemini-2.5-flash",
+          messages: [
+            { role: "system", content: system + "\nReturn ONLY valid JSON, no prose, no markdown fences." },
+            { role: "user", content: userMsg },
+          ],
+          response_format: { type: "json_object" },
+        }),
+      });
+      if (res.ok) break;
       if (res.status === 402) return { error: "AI credits exhausted. Add credits in Settings → Workspace → Usage.", result: null };
-      const t = await res.text();
-      console.error("AI gateway error", res.status, t);
+      if (res.status !== 429 && res.status < 500) {
+        lastErr = await res.text();
+        break;
+      }
+      const wait = 800 * Math.pow(2, attempt) + Math.random() * 400;
+      await new Promise((r) => setTimeout(r, wait));
+    }
+
+    if (!res || !res.ok) {
+      if (res?.status === 429) return { error: "AI is busy. Please wait a few seconds and try again.", result: null };
+      console.error("AI gateway error", res?.status, lastErr);
       return { error: "AI service unavailable.", result: null };
     }
 
