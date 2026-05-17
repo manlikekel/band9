@@ -107,15 +107,73 @@ export const aiMark = createServerFn({ method: "POST" })
 
     const j = await res.json();
     const text: string = j.choices?.[0]?.message?.content ?? "{}";
+    const parsed = robustJsonParse(text);
+    if (parsed !== undefined) return { error: null, result: parsed };
+
+    // Repair pass: ask the model to fix its own broken JSON.
     try {
-      return { error: null, result: JSON.parse(text) };
-    } catch {
-      // best-effort cleanup
-      const cleaned = text.replace(/^```json\s*|\s*```$/g, "").trim();
-      try {
-        return { error: null, result: JSON.parse(cleaned) };
-      } catch {
-        return { error: "Could not parse AI response.", result: { raw: text } };
+      const repair = await fetch(GATEWAY, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash-lite",
+          messages: [
+            { role: "system", content: "Return ONLY valid minified JSON. No prose, no markdown. Fix the input so it parses as JSON, preserving all data." },
+            { role: "user", content: text.slice(0, 12000) },
+          ],
+          response_format: { type: "json_object" },
+        }),
+      });
+      if (repair.ok) {
+        const rj = await repair.json();
+        const rt: string = rj.choices?.[0]?.message?.content ?? "";
+        const rp = robustJsonParse(rt);
+        if (rp !== undefined) return { error: null, result: rp };
       }
+    } catch (e) {
+      console.error("AI repair failed", e);
     }
+
+    console.error("AI returned unparseable content", text.slice(0, 500));
+    return { error: "Could not parse AI response. Please retry.", result: { raw: text } };
   });
+
+function robustJsonParse(raw: string): unknown {
+  if (!raw) return undefined;
+  let s = raw.trim();
+  // strip markdown fences
+  s = s.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+  // find first { or [ and last matching close
+  const start = s.search(/[\{\[]/);
+  if (start === -1) return undefined;
+  const openCh = s[start];
+  const closeCh = openCh === "{" ? "}" : "]";
+  const end = s.lastIndexOf(closeCh);
+  if (end > start) s = s.slice(start, end + 1);
+
+  const attempts = [
+    s,
+    s.replace(/,\s*([}\]])/g, "$1"), // trailing commas
+    s.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ""), // control chars
+    s.replace(/,\s*([}\]])/g, "$1").replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, ""),
+  ];
+  for (const a of attempts) {
+    try {
+      return JSON.parse(a);
+    } catch {
+      /* try next */
+    }
+  }
+  // last resort: try to balance braces/brackets if truncated
+  try {
+    const opens = (s.match(/\{/g) || []).length - (s.match(/\}/g) || []).length;
+    const obrk = (s.match(/\[/g) || []).length - (s.match(/\]/g) || []).length;
+    if (opens > 0 || obrk > 0) {
+      const fixed = s + "]".repeat(Math.max(0, obrk)) + "}".repeat(Math.max(0, opens));
+      return JSON.parse(fixed.replace(/,\s*([}\]])/g, "$1"));
+    }
+  } catch {
+    /* ignore */
+  }
+  return undefined;
+}
