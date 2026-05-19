@@ -17,9 +17,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppStudyPlanRouteImport } from './routes/_app/study-plan'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppProgressRouteImport } from './routes/_app/progress'
-import { Route as AppPracticeRouteImport } from './routes/_app/practice'
 import { Route as AppMockRouteImport } from './routes/_app/mock'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
+import { Route as AppPracticeIndexRouteImport } from './routes/_app/practice.index'
 import { Route as AppPracticeWrongRouteImport } from './routes/_app/practice.wrong'
 import { Route as AppPracticeWritingTask2RouteImport } from './routes/_app/practice.writing-task2'
 import { Route as AppPracticeWritingTask1RouteImport } from './routes/_app/practice.writing-task1'
@@ -68,11 +68,6 @@ const AppProgressRoute = AppProgressRouteImport.update({
   path: '/progress',
   getParentRoute: () => AppRoute,
 } as any)
-const AppPracticeRoute = AppPracticeRouteImport.update({
-  id: '/practice',
-  path: '/practice',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppMockRoute = AppMockRouteImport.update({
   id: '/mock',
   path: '/mock',
@@ -83,45 +78,50 @@ const AppDashboardRoute = AppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPracticeIndexRoute = AppPracticeIndexRouteImport.update({
+  id: '/practice/',
+  path: '/practice/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPracticeWrongRoute = AppPracticeWrongRouteImport.update({
-  id: '/wrong',
-  path: '/wrong',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/wrong',
+  path: '/practice/wrong',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeWritingTask2Route = AppPracticeWritingTask2RouteImport.update({
-  id: '/writing-task2',
-  path: '/writing-task2',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/writing-task2',
+  path: '/practice/writing-task2',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeWritingTask1Route = AppPracticeWritingTask1RouteImport.update({
-  id: '/writing-task1',
-  path: '/writing-task1',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/writing-task1',
+  path: '/practice/writing-task1',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeVocabularyRoute = AppPracticeVocabularyRouteImport.update({
-  id: '/vocabulary',
-  path: '/vocabulary',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/vocabulary',
+  path: '/practice/vocabulary',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeSpeakingRoute = AppPracticeSpeakingRouteImport.update({
-  id: '/speaking',
-  path: '/speaking',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/speaking',
+  path: '/practice/speaking',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeReadingRoute = AppPracticeReadingRouteImport.update({
-  id: '/reading',
-  path: '/reading',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/reading',
+  path: '/practice/reading',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeListeningRoute = AppPracticeListeningRouteImport.update({
-  id: '/listening',
-  path: '/listening',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/listening',
+  path: '/practice/listening',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppPracticeGrammarRoute = AppPracticeGrammarRouteImport.update({
-  id: '/grammar',
-  path: '/grammar',
-  getParentRoute: () => AppPracticeRoute,
+  id: '/practice/grammar',
+  path: '/practice/grammar',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -131,7 +131,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
-  '/practice': typeof AppPracticeRouteWithChildren
   '/progress': typeof AppProgressRoute
   '/settings': typeof AppSettingsRoute
   '/study-plan': typeof AppStudyPlanRoute
@@ -143,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/practice/writing-task1': typeof AppPracticeWritingTask1Route
   '/practice/writing-task2': typeof AppPracticeWritingTask2Route
   '/practice/wrong': typeof AppPracticeWrongRoute
+  '/practice/': typeof AppPracticeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -151,7 +151,6 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/dashboard': typeof AppDashboardRoute
   '/mock': typeof AppMockRoute
-  '/practice': typeof AppPracticeRouteWithChildren
   '/progress': typeof AppProgressRoute
   '/settings': typeof AppSettingsRoute
   '/study-plan': typeof AppStudyPlanRoute
@@ -163,6 +162,7 @@ export interface FileRoutesByTo {
   '/practice/writing-task1': typeof AppPracticeWritingTask1Route
   '/practice/writing-task2': typeof AppPracticeWritingTask2Route
   '/practice/wrong': typeof AppPracticeWrongRoute
+  '/practice': typeof AppPracticeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -173,7 +173,6 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_app/dashboard': typeof AppDashboardRoute
   '/_app/mock': typeof AppMockRoute
-  '/_app/practice': typeof AppPracticeRouteWithChildren
   '/_app/progress': typeof AppProgressRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/study-plan': typeof AppStudyPlanRoute
@@ -185,6 +184,7 @@ export interface FileRoutesById {
   '/_app/practice/writing-task1': typeof AppPracticeWritingTask1Route
   '/_app/practice/writing-task2': typeof AppPracticeWritingTask2Route
   '/_app/practice/wrong': typeof AppPracticeWrongRoute
+  '/_app/practice/': typeof AppPracticeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -195,7 +195,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/mock'
-    | '/practice'
     | '/progress'
     | '/settings'
     | '/study-plan'
@@ -207,6 +206,7 @@ export interface FileRouteTypes {
     | '/practice/writing-task1'
     | '/practice/writing-task2'
     | '/practice/wrong'
+    | '/practice/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -215,7 +215,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/dashboard'
     | '/mock'
-    | '/practice'
     | '/progress'
     | '/settings'
     | '/study-plan'
@@ -227,6 +226,7 @@ export interface FileRouteTypes {
     | '/practice/writing-task1'
     | '/practice/writing-task2'
     | '/practice/wrong'
+    | '/practice'
   id:
     | '__root__'
     | '/'
@@ -236,7 +236,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_app/dashboard'
     | '/_app/mock'
-    | '/_app/practice'
     | '/_app/progress'
     | '/_app/settings'
     | '/_app/study-plan'
@@ -248,6 +247,7 @@ export interface FileRouteTypes {
     | '/_app/practice/writing-task1'
     | '/_app/practice/writing-task2'
     | '/_app/practice/wrong'
+    | '/_app/practice/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -316,13 +316,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProgressRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/practice': {
-      id: '/_app/practice'
-      path: '/practice'
-      fullPath: '/practice'
-      preLoaderRoute: typeof AppPracticeRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/mock': {
       id: '/_app/mock'
       path: '/mock'
@@ -337,66 +330,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/practice/': {
+      id: '/_app/practice/'
+      path: '/practice'
+      fullPath: '/practice/'
+      preLoaderRoute: typeof AppPracticeIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/practice/wrong': {
       id: '/_app/practice/wrong'
-      path: '/wrong'
+      path: '/practice/wrong'
       fullPath: '/practice/wrong'
       preLoaderRoute: typeof AppPracticeWrongRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/writing-task2': {
       id: '/_app/practice/writing-task2'
-      path: '/writing-task2'
+      path: '/practice/writing-task2'
       fullPath: '/practice/writing-task2'
       preLoaderRoute: typeof AppPracticeWritingTask2RouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/writing-task1': {
       id: '/_app/practice/writing-task1'
-      path: '/writing-task1'
+      path: '/practice/writing-task1'
       fullPath: '/practice/writing-task1'
       preLoaderRoute: typeof AppPracticeWritingTask1RouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/vocabulary': {
       id: '/_app/practice/vocabulary'
-      path: '/vocabulary'
+      path: '/practice/vocabulary'
       fullPath: '/practice/vocabulary'
       preLoaderRoute: typeof AppPracticeVocabularyRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/speaking': {
       id: '/_app/practice/speaking'
-      path: '/speaking'
+      path: '/practice/speaking'
       fullPath: '/practice/speaking'
       preLoaderRoute: typeof AppPracticeSpeakingRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/reading': {
       id: '/_app/practice/reading'
-      path: '/reading'
+      path: '/practice/reading'
       fullPath: '/practice/reading'
       preLoaderRoute: typeof AppPracticeReadingRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/listening': {
       id: '/_app/practice/listening'
-      path: '/listening'
+      path: '/practice/listening'
       fullPath: '/practice/listening'
       preLoaderRoute: typeof AppPracticeListeningRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
     '/_app/practice/grammar': {
       id: '/_app/practice/grammar'
-      path: '/grammar'
+      path: '/practice/grammar'
       fullPath: '/practice/grammar'
       preLoaderRoute: typeof AppPracticeGrammarRouteImport
-      parentRoute: typeof AppPracticeRoute
+      parentRoute: typeof AppRoute
     }
   }
 }
 
-interface AppPracticeRouteChildren {
+interface AppRouteChildren {
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppMockRoute: typeof AppMockRoute
+  AppProgressRoute: typeof AppProgressRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppStudyPlanRoute: typeof AppStudyPlanRoute
   AppPracticeGrammarRoute: typeof AppPracticeGrammarRoute
   AppPracticeListeningRoute: typeof AppPracticeListeningRoute
   AppPracticeReadingRoute: typeof AppPracticeReadingRoute
@@ -405,9 +410,15 @@ interface AppPracticeRouteChildren {
   AppPracticeWritingTask1Route: typeof AppPracticeWritingTask1Route
   AppPracticeWritingTask2Route: typeof AppPracticeWritingTask2Route
   AppPracticeWrongRoute: typeof AppPracticeWrongRoute
+  AppPracticeIndexRoute: typeof AppPracticeIndexRoute
 }
 
-const AppPracticeRouteChildren: AppPracticeRouteChildren = {
+const AppRouteChildren: AppRouteChildren = {
+  AppDashboardRoute: AppDashboardRoute,
+  AppMockRoute: AppMockRoute,
+  AppProgressRoute: AppProgressRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppStudyPlanRoute: AppStudyPlanRoute,
   AppPracticeGrammarRoute: AppPracticeGrammarRoute,
   AppPracticeListeningRoute: AppPracticeListeningRoute,
   AppPracticeReadingRoute: AppPracticeReadingRoute,
@@ -416,28 +427,7 @@ const AppPracticeRouteChildren: AppPracticeRouteChildren = {
   AppPracticeWritingTask1Route: AppPracticeWritingTask1Route,
   AppPracticeWritingTask2Route: AppPracticeWritingTask2Route,
   AppPracticeWrongRoute: AppPracticeWrongRoute,
-}
-
-const AppPracticeRouteWithChildren = AppPracticeRoute._addFileChildren(
-  AppPracticeRouteChildren,
-)
-
-interface AppRouteChildren {
-  AppDashboardRoute: typeof AppDashboardRoute
-  AppMockRoute: typeof AppMockRoute
-  AppPracticeRoute: typeof AppPracticeRouteWithChildren
-  AppProgressRoute: typeof AppProgressRoute
-  AppSettingsRoute: typeof AppSettingsRoute
-  AppStudyPlanRoute: typeof AppStudyPlanRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppDashboardRoute: AppDashboardRoute,
-  AppMockRoute: AppMockRoute,
-  AppPracticeRoute: AppPracticeRouteWithChildren,
-  AppProgressRoute: AppProgressRoute,
-  AppSettingsRoute: AppSettingsRoute,
-  AppStudyPlanRoute: AppStudyPlanRoute,
+  AppPracticeIndexRoute: AppPracticeIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
