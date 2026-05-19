@@ -88,21 +88,45 @@ function MockExam() {
     setLoading(true);
     try {
       // Sequenced (not parallel) to avoid AI gateway rate limits.
-      const calls: { label: string; payload: any; task: any }[] = [
-        { label: "Listening Part 1", task: "generate_questions", payload: { section: "listening", part: 1, count: 10 } },
-        { label: "Listening Part 2", task: "generate_questions", payload: { section: "listening", part: 2, count: 10 } },
-        { label: "Listening Part 3", task: "generate_questions", payload: { section: "listening", part: 3, count: 10 } },
-        { label: "Listening Part 4", task: "generate_questions", payload: { section: "listening", part: 4, count: 10 } },
-        { label: "Reading Section 1", task: "generate_questions", payload: { section: "reading", part: 1, instruction: "GT Section 1: short factual texts." } },
-        { label: "Reading Section 2", task: "generate_questions", payload: { section: "reading", part: 2, instruction: "GT Section 2: workplace/employment text." } },
-        { label: "Reading Section 3", task: "generate_questions", payload: { section: "reading", part: 3, instruction: "GT Section 3: longer descriptive text." } },
-        { label: "Writing Task 1", task: "writing_prompt", payload: { task: "task1" } },
-        { label: "Writing Task 2", task: "writing_prompt", payload: { task: "task2" } },
-        { label: "Speaking prompts", task: "speaking_prompt", payload: { part: "all" } },
+      const calls: { label: string; key: string; payload: any; task: any }[] = [
+        { label: "Listening Part 1", key: "listening_p1_v1", task: "generate_questions", payload: { section: "listening", part: 1, count: 10 } },
+        { label: "Listening Part 2", key: "listening_p2_v1", task: "generate_questions", payload: { section: "listening", part: 2, count: 10 } },
+        { label: "Listening Part 3", key: "listening_p3_v1", task: "generate_questions", payload: { section: "listening", part: 3, count: 10 } },
+        { label: "Listening Part 4", key: "listening_p4_v1", task: "generate_questions", payload: { section: "listening", part: 4, count: 10 } },
+        { label: "Reading Section 1", key: "reading_s1_v1", task: "generate_questions", payload: { section: "reading", part: 1, instruction: "GT Section 1: short factual texts." } },
+        { label: "Reading Section 2", key: "reading_s2_v1", task: "generate_questions", payload: { section: "reading", part: 2, instruction: "GT Section 2: workplace/employment text." } },
+        { label: "Reading Section 3", key: "reading_s3_v1", task: "generate_questions", payload: { section: "reading", part: 3, instruction: "GT Section 3: longer descriptive text." } },
+        { label: "Writing Task 1", key: "writing_t1_v1", task: "writing_prompt", payload: { task: "task1" } },
+        { label: "Writing Task 2", key: "writing_t2_v1", task: "writing_prompt", payload: { task: "task2" } },
+        { label: "Speaking prompts", key: "speaking_all_v1", task: "speaking_prompt", payload: { part: "all" } },
       ];
 
+      const CACHE_PREFIX = "mock_cache:";
+      const CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+      const readCache = (k: string): any | null => {
+        try {
+          const raw = localStorage.getItem(CACHE_PREFIX + k);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed.ts !== "number") return null;
+          if (Date.now() - parsed.ts > CACHE_TTL_MS) return null;
+          return parsed.result ?? null;
+        } catch { return null; }
+      };
+      const writeCache = (k: string, result: any) => {
+        try { localStorage.setItem(CACHE_PREFIX + k, JSON.stringify({ ts: Date.now(), result })); } catch { /* quota */ }
+      };
+
       const results: any[] = [];
+      let cachedCount = 0;
       for (let i = 0; i < calls.length; i++) {
+        const cached = readCache(calls[i].key);
+        if (cached) {
+          setLoadingMsg(`Loaded ${calls[i].label} from cache (${i + 1}/${calls.length})…`);
+          results.push({ result: cached });
+          cachedCount++;
+          continue;
+        }
         setLoadingMsg(`Building ${calls[i].label} (${i + 1}/${calls.length})…`);
         const r = await ai({ data: { task: calls[i].task, payload: calls[i].payload } });
         if (r.error) {
@@ -111,10 +135,13 @@ function MockExam() {
           setLoadingMsg("");
           return;
         }
+        if (r.result) writeCache(calls[i].key, r.result);
         results.push(r);
         // gentle spacing to keep under per-minute quotas
         if (i < calls.length - 1) await new Promise((res) => setTimeout(res, 350));
       }
+      if (cachedCount > 0) toast.success(`Reused ${cachedCount}/${calls.length} cached sections`);
+
       const [l1, l2, l3, l4, r1, r2, r3, w1, w2, sp] = results;
 
       const speak = sp.result as any;
