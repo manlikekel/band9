@@ -295,6 +295,19 @@ function MockExam() {
         >
           {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {loadingMsg || "Building exam…"}</> : "Begin mock exam"}
         </button>
+        <button
+          disabled={loading}
+          onClick={() => {
+            try {
+              Object.keys(localStorage).filter((k) => k.startsWith("mock_cache:")).forEach((k) => localStorage.removeItem(k));
+              toast.success("Cached exam content cleared");
+            } catch { /* ignore */ }
+          }}
+          className="mt-2 h-10 w-full rounded-xl border border-border text-sm text-muted-foreground disabled:opacity-50"
+        >
+          Clear cached exam content
+        </button>
+
         <AiDisclaimer className="mt-5" />
       </div>
     );
