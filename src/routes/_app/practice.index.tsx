@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { AiDisclaimer } from "@/components/AiDisclaimer";
 import { Headphones, BookOpen, PenLine, FileText, Mic, Library, BookA, RotateCcw, ChevronRight } from "lucide-react";
 
-export const Route = createFileRoute("/_app/practice")({ component: PracticeHub });
+export const Route = createFileRoute("/_app/practice/")({ component: PracticeHub });
 
 const items = [
   { to: "/practice/listening", icon: Headphones, title: "Listening", desc: "Form, table, MCQ, map" },
