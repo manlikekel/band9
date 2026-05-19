@@ -29,25 +29,33 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-md px-5 pt-12 pb-16">
-        <Link to="/" className="flex items-center gap-2 mb-10">
-          <div className="h-9 w-9 rounded-xl gradient-hero grid place-items-center text-primary-foreground">
-            <Sparkles className="h-5 w-5" />
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="absolute -top-32 -right-24 h-72 w-72 rounded-full bg-gold/15 blur-3xl" />
+      <div className="absolute -bottom-40 -left-20 h-80 w-80 rounded-full bg-secondary/40 blur-3xl" />
+
+      <div className="relative mx-auto max-w-md px-6 pt-14 pb-16">
+        <Link to="/" className="flex items-center gap-3 mb-12">
+          <div className="h-10 w-10 rounded-xl bg-gold grid place-items-center text-gold-foreground gold-glow">
+            <Sparkles className="h-5 w-5" strokeWidth={2.5} />
           </div>
-          <span className="font-display text-lg font-semibold">Band9 Coach</span>
+          <div>
+            <p className="eyebrow leading-none">Band9 Coach</p>
+            <p className="text-[11px] text-foreground/60 mt-1">IELTS, mastered.</p>
+          </div>
         </Link>
-        <h1 className="font-display text-3xl font-semibold">Welcome back</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Sign in to continue your practice.</p>
+
+        <p className="eyebrow">Sign in</p>
+        <h1 className="font-display text-4xl mt-1 leading-tight">Welcome back.</h1>
+        <p className="text-foreground/60 mt-2 text-sm">Continue where your last session left off.</p>
 
         <button
           onClick={google}
-          className="mt-8 h-12 w-full rounded-xl border border-border bg-card font-medium hover:bg-muted transition flex items-center justify-center gap-2"
+          className="mt-10 h-12 w-full rounded-2xl bg-cream text-cream-foreground font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-[var(--shadow-card)]"
         >
           <GoogleIcon /> Continue with Google
         </button>
 
-        <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground">
+        <div className="my-6 flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] text-foreground/40">
           <div className="h-px flex-1 bg-border" />
           or
           <div className="h-px flex-1 bg-border" />
@@ -60,7 +68,7 @@ function LoginPage() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-12 w-full rounded-2xl border border-input bg-card/40 px-4 text-sm placeholder:text-foreground/40 focus:outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/30 transition"
           />
           <input
             required
@@ -68,20 +76,20 @@ function LoginPage() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="h-12 w-full rounded-xl border border-input bg-background px-4 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            className="h-12 w-full rounded-2xl border border-input bg-card/40 px-4 text-sm placeholder:text-foreground/40 focus:outline-none focus:border-gold/60 focus:ring-2 focus:ring-gold/30 transition"
           />
           <button
             type="submit"
             disabled={loading}
-            className="h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-50"
+            className="h-12 w-full rounded-2xl bg-gold text-gold-foreground font-bold tracking-wide disabled:opacity-50 hover:opacity-95 transition gold-glow"
           >
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <p className="mt-6 text-sm text-center text-muted-foreground">
+        <p className="mt-8 text-sm text-center text-foreground/60">
           New here?{" "}
-          <Link to="/signup" className="text-primary font-medium">
+          <Link to="/signup" className="text-gold font-semibold">
             Create an account
           </Link>
         </p>
@@ -89,6 +97,7 @@ function LoginPage() {
     </div>
   );
 }
+
 
 function GoogleIcon() {
   return (
