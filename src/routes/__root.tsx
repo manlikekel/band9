@@ -75,7 +75,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { name: "theme-color", content: "#0f1f3d" },
+      { name: "theme-color", content: "#064e3b" },
       { title: "Band9 Coach — IELTS General Practice" },
       { name: "description", content: "AI-powered IELTS General Training practice: listening, reading, writing, speaking, and full mock exams with AI-estimated band scores." },
       { property: "og:title", content: "Band9 Coach — IELTS General Practice" },
@@ -92,8 +92,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fira+Sans:wght@300;400;500;600;700&display=swap",
       },
+
       { rel: "stylesheet", href: appCss },
     ],
   }),
