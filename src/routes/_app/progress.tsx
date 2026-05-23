@@ -4,13 +4,26 @@ import { PageHeader } from "@/components/PageHeader";
 import { AiDisclaimer } from "@/components/AiDisclaimer";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
-import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
 import { bandColor } from "@/lib/ielts";
-import { TrendingUp, AlertCircle } from "lucide-react";
+import { TrendingUp, AlertCircle, Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/_app/progress")({ component: ProgressPage });
 
 interface Row { section: string; estimated_band: number | null; created_at: string }
+
+const GOLD = "oklch(0.78 0.13 88)";
+const CREAM = "oklch(0.95 0.025 90)";
+const BORDER = "oklch(1 0 0 / 0.10)";
+const MUTED = "oklch(0.85 0.04 90 / 0.6)";
+
+const tooltipStyle = {
+  background: "oklch(0.34 0.075 163)",
+  border: "1px solid oklch(0.78 0.13 88 / 0.4)",
+  borderRadius: "0.75rem",
+  fontSize: 12,
+  color: "oklch(0.96 0.02 88)",
+};
 
 function ProgressPage() {
   const { user } = useAuth();
@@ -35,7 +48,6 @@ function ProgressPage() {
     })();
   }, [user]);
 
-  // Per-section averages
   const bySection = ["listening", "reading", "writing", "speaking"].map((sec) => {
     const wRows = sec === "writing" ? writing : sec === "speaking" ? speaking : practice.filter((r) => r.section === sec);
     const bands = wRows.map((r: any) => Number(r.estimated_band)).filter((n) => Number.isFinite(n));
@@ -46,92 +58,113 @@ function ProgressPage() {
   const trend = mocks.map((m) => ({
     d: new Date(m.completed_at).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
     overall: Number(m.overall_band ?? 0),
-    listening: Number(m.listening_band ?? 0),
-    reading: Number(m.reading_band ?? 0),
-    writing: Number(m.writing_band ?? 0),
-    speaking: Number(m.speaking_band ?? 0),
   }));
 
   const weakest = bySection.filter((s) => s.attempts > 0).sort((a, b) => a.band - b.band)[0];
+  const empty = practice.length + mocks.length + writing.length + speaking.length === 0;
 
   return (
     <div>
-      <PageHeader title="Progress" subtitle="Trends, strengths & weaknesses" back="/dashboard" />
+      <PageHeader title="Progress" subtitle="Trends · Strengths" back="/dashboard" />
 
-      {practice.length + mocks.length + writing.length + speaking.length === 0 ? (
-        <div className="mt-10 text-center text-sm text-muted-foreground">
-          <AlertCircle className="h-8 w-8 mx-auto mb-3 opacity-50" />
-          Complete some practice sessions or a mock exam to see your trends.
+      {empty ? (
+        <div className="mt-12 text-center text-sm text-foreground/60">
+          <div className="h-14 w-14 mx-auto rounded-2xl border border-gold/30 grid place-items-center mb-4">
+            <Sparkles className="h-6 w-6 text-gold" />
+          </div>
+          Complete some practice or a mock exam to see your trends.
         </div>
       ) : (
         <>
-          <section className="mt-4 grid grid-cols-2 gap-3">
+          <section className="mt-5 grid grid-cols-2 gap-3">
             {bySection.map((s) => (
-              <div key={s.section} className="rounded-2xl border border-border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">{s.section}</p>
-                <p className={`font-display text-2xl font-semibold mt-1 ${bandColor(s.band || null)}`}>
+              <div key={s.section} className="tile p-4">
+                <p className="eyebrow">{s.section}</p>
+                <p className={`font-display text-4xl mt-2 ${bandColor(s.band || null)}`}>
                   {s.band || "—"}
                 </p>
-                <p className="text-[11px] text-muted-foreground mt-1">{s.attempts} attempt{s.attempts === 1 ? "" : "s"}</p>
+                <p className="text-[10px] text-foreground/50 mt-1 uppercase tracking-wider">
+                  {s.attempts} attempt{s.attempts === 1 ? "" : "s"}
+                </p>
               </div>
             ))}
           </section>
 
           {weakest && weakest.band > 0 && (
-            <section className="mt-4 rounded-2xl border border-warning/30 bg-warning/5 p-4">
-              <p className="text-xs font-semibold flex items-center gap-1.5"><AlertCircle className="h-3.5 w-3.5 text-warning" /> Focus area</p>
-              <p className="text-sm mt-1">Your weakest skill is <span className="font-semibold text-warning">{weakest.section}</span> (avg band {weakest.band}). Add more {weakest.section.toLowerCase()} practice this week.</p>
+            <section className="mt-4 rounded-2xl border border-gold/30 bg-gold/5 p-4">
+              <p className="eyebrow flex items-center gap-1.5">
+                <AlertCircle className="h-3 w-3" /> Focus area
+              </p>
+              <p className="text-sm mt-2">
+                Weakest skill is{" "}
+                <span className="font-display text-gold text-base">{weakest.section}</span>{" "}
+                <span className="text-foreground/60">(avg band {weakest.band}).</span> Prioritise this skill in your next session.
+              </p>
             </section>
           )}
 
           {trend.length > 0 && (
-            <section className="mt-4 rounded-2xl border border-border bg-card p-4">
-              <p className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="h-4 w-4 text-primary" /> Mock exam trend</p>
-              <div className="h-52 mt-3">
+            <section className="mt-4 tile p-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="eyebrow">Performance</p>
+                  <p className="font-display text-lg mt-0.5 flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-gold" /> Mock trend
+                  </p>
+                </div>
+                <span className="text-[10px] text-foreground/50">{trend.length} mock{trend.length === 1 ? "" : "s"}</span>
+              </div>
+              <div className="h-44 mt-3 -mx-2">
                 <ResponsiveContainer>
                   <LineChart data={trend}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                    <XAxis dataKey="d" tick={{ fontSize: 10 }} />
-                    <YAxis domain={[3, 9]} tick={{ fontSize: 10 }} />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="overall" stroke="oklch(0.45 0.13 255)" strokeWidth={2.5} dot />
+                    <XAxis dataKey="d" tick={{ fontSize: 10, fill: MUTED }} axisLine={false} tickLine={false} />
+                    <YAxis domain={[3, 9]} tick={{ fontSize: 10, fill: MUTED }} axisLine={false} tickLine={false} width={24} />
+                    <Tooltip contentStyle={tooltipStyle} />
+                    <Line type="monotone" dataKey="overall" stroke={GOLD} strokeWidth={2.5} dot={{ r: 3, fill: GOLD }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </section>
           )}
 
-          <section className="mt-4 rounded-2xl border border-border bg-card p-4">
-            <p className="text-sm font-semibold">Skill comparison</p>
-            <div className="h-48 mt-3">
+          <section className="mt-4 tile p-5">
+            <p className="eyebrow">Skill Comparison</p>
+            <p className="font-display text-lg mt-0.5">By section</p>
+            <div className="h-48 mt-3 -mx-2">
               <ResponsiveContainer>
                 <BarChart data={bySection}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="section" tick={{ fontSize: 10 }} />
-                  <YAxis domain={[0, 9]} tick={{ fontSize: 10 }} />
-                  <Tooltip />
-                  <Bar dataKey="band" fill="oklch(0.7 0.14 75)" radius={[6, 6, 0, 0]} />
+                  <XAxis dataKey="section" tick={{ fontSize: 10, fill: MUTED }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[0, 9]} tick={{ fontSize: 10, fill: MUTED }} axisLine={false} tickLine={false} width={24} />
+                  <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "oklch(1 0 0 / 0.04)" }} />
+                  <Bar dataKey="band" fill={GOLD} radius={[8, 8, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </section>
 
-          <section className="mt-4 rounded-2xl border border-border bg-card p-4">
-            <p className="text-sm font-semibold">Recent mock exams</p>
-            <ul className="mt-2 divide-y divide-border">
+          <section className="mt-4 tile p-5">
+            <p className="eyebrow">History</p>
+            <p className="font-display text-lg mt-0.5">Recent mocks</p>
+            <ul className="mt-3 divide-y" style={{ borderColor: BORDER }}>
               {mocks.slice(-5).reverse().map((m) => (
-                <li key={m.id} className="py-2 flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground text-xs">{new Date(m.completed_at).toLocaleDateString()}</span>
-                  <span className={`font-display text-lg font-semibold ${bandColor(Number(m.overall_band))}`}>{m.overall_band}</span>
+                <li key={m.id} className="py-3 flex items-center justify-between">
+                  <span className="text-xs text-foreground/60 font-mono">
+                    {new Date(m.completed_at).toLocaleDateString()}
+                  </span>
+                  <span className={`font-display text-xl ${bandColor(Number(m.overall_band))}`}>
+                    {m.overall_band}
+                  </span>
                 </li>
               ))}
-              {mocks.length === 0 && <li className="py-3 text-xs text-muted-foreground text-center">No mocks yet.</li>}
+              {mocks.length === 0 && (
+                <li className="py-3 text-xs text-foreground/50 text-center">No mocks yet.</li>
+              )}
             </ul>
           </section>
         </>
       )}
 
-      <AiDisclaimer className="mt-5" />
+      <AiDisclaimer className="mt-6" />
     </div>
   );
 }
