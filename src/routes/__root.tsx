@@ -76,6 +76,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#064e3b" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: "Band9 Coach" },
       { title: "Band9 Coach — IELTS General Practice" },
       { name: "description", content: "AI-powered IELTS General Training practice: listening, reading, writing, speaking, and full mock exams with AI-estimated band scores." },
       { property: "og:title", content: "Band9 Coach — IELTS General Practice" },
@@ -94,6 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Fira+Sans:wght@300;400;500;600;700&display=swap",
       },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icon-512.png" },
 
       { rel: "stylesheet", href: appCss },
     ],

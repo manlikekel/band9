@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { BottomNav } from "@/components/BottomNav";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 export const Route = createFileRoute("/_app")({
   beforeLoad: async () => {
@@ -38,6 +39,7 @@ function AppLayout() {
       <div className="mx-auto max-w-md px-4 pb-24">
         <Outlet />
       </div>
+      <InstallPrompt />
       <BottomNav />
     </div>
   );

@@ -253,47 +253,61 @@ function MockExam() {
   if (stage === "intro") {
     return (
       <div>
-        <PageHeader title="Full Mock Exam" subtitle="~2h 44m total" back="/dashboard" />
-        <section className="mt-4 rounded-2xl gradient-hero p-5 text-primary-foreground">
-          <p className="text-xs uppercase opacity-80 tracking-wide">Order</p>
-          <ol className="mt-2 text-sm space-y-1">
-            <li>1. Listening — 30 min</li>
-            <li>2. Reading — 60 min</li>
-            <li>3. Writing — 60 min (T1 + T2)</li>
-            <li>4. Speaking — ~14 min</li>
-          </ol>
+        <PageHeader title="Full Mock Exam" subtitle="~2h 44m · Exam-style" back="/dashboard" />
+
+        <section className="mt-5 relative overflow-hidden rounded-[24px] gradient-hero border border-gold/30 p-6 shadow-[var(--shadow-elevated)]">
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold/15 blur-3xl" />
+          <div className="relative">
+            <p className="eyebrow">Order</p>
+            <ol className="mt-3 grid gap-2.5">
+              {[
+                { i: 1, label: "Listening", t: "30 min", Icon: Headphones },
+                { i: 2, label: "Reading", t: "60 min", Icon: BookOpen },
+                { i: 3, label: "Writing", t: "60 min · T1 + T2", Icon: PenLine },
+                { i: 4, label: "Speaking", t: "~14 min", Icon: Mic },
+              ].map(({ i, label, t, Icon }) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="font-display text-gold text-lg w-5">{i}</span>
+                  <Icon className="h-4 w-4 text-gold/70" />
+                  <span className="font-display text-base flex-1">{label}</span>
+                  <span className="text-[11px] text-foreground/60 font-mono">{t}</span>
+                </div>
+              ))}
+            </ol>
+          </div>
         </section>
 
-        <div className="mt-4 grid grid-cols-2 gap-3">
+        <p className="eyebrow mt-6">Mode</p>
+        <div className="mt-2 grid grid-cols-2 gap-3">
           <button
             onClick={() => setMode("strict")}
-            className={`p-4 rounded-2xl border text-left ${mode === "strict" ? "border-primary bg-primary/5" : "border-border bg-card"}`}
+            className={`tile p-4 text-left transition ${mode === "strict" ? "border-gold/60 bg-gold/5" : ""}`}
           >
-            <p className="text-sm font-semibold">Strict</p>
-            <p className="text-xs text-muted-foreground mt-1">Auto-advance when timer ends, no pausing.</p>
+            <p className="font-display text-base">Strict</p>
+            <p className="text-[11px] text-foreground/60 mt-1">Auto-advance · no pausing</p>
           </button>
           <button
             onClick={() => setMode("practice")}
-            className={`p-4 rounded-2xl border text-left ${mode === "practice" ? "border-primary bg-primary/5" : "border-border bg-card"}`}
+            className={`tile p-4 text-left transition ${mode === "practice" ? "border-gold/60 bg-gold/5" : ""}`}
           >
-            <p className="text-sm font-semibold">Practice</p>
-            <p className="text-xs text-muted-foreground mt-1">Self-paced, no auto-advance.</p>
+            <p className="font-display text-base">Practice</p>
+            <p className="text-[11px] text-foreground/60 mt-1">Self-paced · relaxed</p>
           </button>
         </div>
 
-        <div className="mt-4 rounded-xl border border-warning/30 bg-warning/5 p-3 flex gap-2">
-          <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
-          <p className="text-xs text-muted-foreground">
-            Browser TTS is used for listening audio. Audio plays once per part — exam-style.
+        <div className="mt-4 rounded-2xl border border-gold/25 bg-gold/5 p-3 flex gap-2">
+          <AlertTriangle className="h-4 w-4 text-gold shrink-0 mt-0.5" />
+          <p className="text-[11px] text-foreground/70 leading-relaxed">
+            Browser TTS handles listening audio. Plays once per part — exam-style.
           </p>
         </div>
 
         <button
           disabled={loading}
           onClick={start}
-          className="mt-5 h-12 w-full rounded-xl bg-primary text-primary-foreground font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+          className="mt-5 h-12 w-full rounded-2xl bg-gold text-gold-foreground font-bold uppercase tracking-wider text-xs disabled:opacity-50 flex items-center justify-center gap-2 gold-glow"
         >
-          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {loadingMsg || "Building exam…"}</> : "Begin mock exam"}
+          {loading ? <><Loader2 className="h-4 w-4 animate-spin" /> {loadingMsg || "Building exam…"}</> : <><Sparkles className="h-4 w-4" /> Begin mock exam</>}
         </button>
         <button
           disabled={loading}
@@ -303,7 +317,7 @@ function MockExam() {
               toast.success("Cached exam content cleared");
             } catch { /* ignore */ }
           }}
-          className="mt-2 h-10 w-full rounded-xl border border-border text-sm text-muted-foreground disabled:opacity-50"
+          className="mt-2 h-10 w-full rounded-xl border border-border text-[11px] uppercase tracking-wider text-foreground/60 hover:border-gold/40 hover:text-foreground transition disabled:opacity-50"
         >
           Clear cached exam content
         </button>
@@ -315,9 +329,10 @@ function MockExam() {
 
   if (stage === "marking" || (loading && stage === "report")) {
     return (
-      <div className="py-20 text-center">
-        <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-        <p className="mt-3 text-sm text-muted-foreground">Generating your full exam report…</p>
+      <div className="py-24 text-center">
+        <Loader2 className="h-10 w-10 animate-spin mx-auto text-gold" />
+        <p className="eyebrow mt-4">Marking</p>
+        <p className="font-display text-lg mt-1">Generating your exam report…</p>
       </div>
     );
   }
@@ -333,12 +348,17 @@ function MockExam() {
 
   return (
     <div className="pb-20">
-      <header className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-background/95 backdrop-blur-lg border-b border-border">
-        <div className="flex items-center gap-2">
-          <StageIcon className="h-5 w-5 text-primary" />
-          <p className="font-display text-base font-semibold capitalize flex-1">{stage}</p>
-          <div className={`flex items-center gap-1 font-mono text-sm ${seconds < 60 ? "text-destructive" : ""}`}>
-            <Clock className="h-4 w-4" /> {mm}:{ss}
+      <header className="sticky top-0 z-30 -mx-4 px-4 py-3 bg-[color-mix(in_oklch,var(--background)_85%,transparent)] backdrop-blur-xl border-b border-border">
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-xl bg-gold/15 border border-gold/30 text-gold grid place-items-center">
+            <StageIcon className="h-4 w-4" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="eyebrow leading-none">In Progress</p>
+            <p className="font-display text-base capitalize mt-0.5">{stage}</p>
+          </div>
+          <div className={`flex items-center gap-1.5 font-mono text-sm tabular-nums px-3 h-9 rounded-xl border ${seconds < 60 ? "text-destructive border-destructive/40 bg-destructive/5" : "text-gold border-gold/30 bg-gold/5"}`}>
+            <Clock className="h-3.5 w-3.5" /> {mm}:{ss}
           </div>
         </div>
       </header>
